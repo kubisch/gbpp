@@ -8,7 +8,7 @@
 int main(int argc, char const *argv[]) {
   DMG::DMG dmg;
   unsigned char test_program[] = {
-    0x60, // LD H, B        // NOP 
+    0x60, // LD H, B        // NOP
     0x68, // LD L, B        // NOP
     0x7E, // LD A, [HL]     // A = 0x60
     0x86, // ADD A, [HL]    // A = 0x60

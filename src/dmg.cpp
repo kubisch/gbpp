@@ -1,7 +1,8 @@
 #include "dmg.h"
 
-#include <cstdint>
 #include <stdckdint.h>
+
+#include <cstdint>
 
 namespace DMG {
   void DMG::init() {
@@ -16,16 +17,16 @@ namespace DMG {
     mem.fill(0);
   }
 
-  void DMG::load(unsigned char arr[], uint16_t size, uint16_t offset) {
+  void DMG::load(uint8_t arr[], uint16_t size, uint16_t offset) {
     for (char i = 0; i < size; i++) {
       mem[offset + i] = arr[i];
     }
   }
 
   void DMG::execute() {
-    unsigned char opcode = mem[PC.val];
+    uint8_t opcode = mem[PC.val];
 
-    char block = opcode >> 6;
+    uint8_t block = opcode >> 6;
 
     if (block == 0b00) {
       // execute_block0(opcode);
@@ -64,60 +65,66 @@ namespace DMG {
     char aluOP = (opcode >> 3) & 0b111;
     bool halfCarry, carry;
     unsigned char intermediate = 0;
-  
+
     switch (aluOP) {
-      case 0b000: // ADD A,
+      case 0b000:  // ADD A,
         halfCarry = (*A & 0xF) + (*decode_r8(src) & 0xF) > 0xF;
         carry = ckd_add(A, *A, *decode_r8(src));
-        
+
         *F = (*F & 0xF) | mk_flags(*A == 0, false, halfCarry, carry);
         break;
 
-      case 0b001: // ADC A,
-        halfCarry = (*A & 0xF) + (*decode_r8(src) & 0xF) + ((*F & CARRY) >> 4) > 0xF;
+      case 0b001:  // ADC A,
+        halfCarry =
+          (*A & 0xF) + (*decode_r8(src) & 0xF) + ((*F & CARRY) >> 4) > 0xF;
         carry = ckd_add(&intermediate, *decode_r8(src), (*F & CARRY) >> 4);
         carry |= ckd_add(A, *A, intermediate);
 
         *F = (*F & 0xF) | mk_flags(*A == 0, false, halfCarry, carry);
         break;
-      
-      case 0b010: // SUB A,
+
+      case 0b010:  // SUB A,
         halfCarry = (*A & 0xF) < (*decode_r8(src) & 0xF);
         carry = ckd_sub(A, *A, *decode_r8(src));
-        
+
         *F = (*F & 0xF) | mk_flags(*A == 0, true, halfCarry, carry);
         break;
 
-      case 0b011: // SBC A,
+      case 0b011:  // SBC A,
         halfCarry = (*A & 0xF) < (*decode_r8(src) & 0xF) + 1;
         carry = ckd_add(&intermediate, *decode_r8(src), 1);
         carry |= ckd_sub(A, *A, intermediate);
-        
+
         *F = (*F & 0xF) | mk_flags(*A == 0, true, halfCarry, carry);
         break;
 
-      case 0b100: // AND A,
+      case 0b100:  // AND A,
         *A &= *decode_r8(src);
-        
+
         *F = mk_flags(*A == 0, false, true, false);
         break;
 
-      case 0b101: // XOR A,
+      case 0b101:  // XOR A,
         *A ^= *decode_r8(src);
 
         *F = mk_flags(*A == 0, false, false, false);
         break;
 
-      case 0b110: // OR A,
+      case 0b110:  // OR A,
         *A |= *decode_r8(src);
 
         *F = mk_flags(*A == 0, false, false, false);
         break;
 
-      case 0b111: // CP A,
+      case 0b111:  // CP A,
         intermediate = *decode_r8(src);
-        *F = mk_flags(*A == intermediate, true, (*A & 0xF) < (intermediate & 0xF), *A < intermediate);
 
+        *F = mk_flags(
+          *A == intermediate,
+          true,
+          (*A & 0xF) < (intermediate & 0xF),
+          *A < intermediate
+        );
         break;
     }
 
@@ -132,52 +139,43 @@ namespace DMG {
     return;
   }
 
-  unsigned char DMG::mk_flags(bool zero, bool sub, bool half_carry, bool carry) {
-    unsigned char flags = 0;
-    if (zero)
-      flags |= ZERO;
-    if (sub)
-      flags |= SUB;
-    if (half_carry)
-      flags |= HALF_CARRY;
-    if (carry)
-      flags |= CARRY;
-
-    return flags;
+  uint8_t DMG::mk_flags(bool zero, bool sub, bool half_carry, bool carry) {
+    return (zero ? ZERO : 0) | (sub ? SUB : 0) | (half_carry ? HALF_CARRY : 0)
+      | (carry ? CARRY : 0);
   }
 
-  R8* DMG::decode_r8(char index) {
+  R8* DMG::decode_r8(uint8_t index) {
     switch (index) {
-      case 0:
+      case 0b000:
         return B;
-      case 1:
+      case 0b001:
         return C;
-      case 2:
+      case 0b010:
         return D;
-      case 3:
+      case 0b011:
         return E;
-      case 4:
+      case 0b100:
         return H;
-      case 5:
+      case 0b101:
         return L;
-      case 6:
+      case 0b110:
         return (uint8_t*)(mem.data() + HL.val);
-      case 7:
+      case 0b111:
         return A;
       default:
         return nullptr;
     }
   }
 
-  R16* DMG::decode_r16(char index) {
+  R16* DMG::decode_r16(uint8_t index) {
     switch (index) {
-      case 0:
+      case 0b00:
         return &BC;
-      case 1:
+      case 0b01:
         return &DE;
-      case 2:
+      case 0b10:
         return &HL;
-      case 3:
+      case 0b11:
         return &SP;
       default:
         return nullptr;

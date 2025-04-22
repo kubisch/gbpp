@@ -1,5 +1,6 @@
-BasedOnStyle: Google
-AlignAfterOpenBracket: Align
+BasedOnStyle: Google 
+AlignAfterOpenBracket: BlockIndent
+AlignOperands: DontAlign
 AllowAllConstructorInitializersOnNextLine: true
 AlwaysBreakAfterReturnType: None
 BinPackArguments: false
@@ -15,8 +16,11 @@ BraceWrapping:
   BeforeCatch: false
   BeforeElse: false
   IndentBraces: false
+BreakBeforeBinaryOperators: NonAssignment
 BreakConstructorInitializers: BeforeColon
 ConstructorInitializerIndentWidth: 2
+ContinuationIndentWidth: 2
+FixNamespaceComments: false
 IndentAccessModifiers: true
 IndentWidth: 2
 NamespaceIndentation: All
