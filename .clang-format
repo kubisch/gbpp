@@ -1,0 +1,25 @@
+BasedOnStyle: Google
+AlignAfterOpenBracket: Align
+AllowAllConstructorInitializersOnNextLine: true
+AlwaysBreakAfterReturnType: None
+BinPackArguments: false
+BinPackParameters: false
+BraceWrapping:
+  AfterClass: false
+  AfterControlStatement: false
+  AfterEnum: false
+  AfterFunction: false
+  AfterNamespace: false
+  AfterStruct: false
+  AfterUnion: false
+  BeforeCatch: false
+  BeforeElse: false
+  IndentBraces: false
+BreakConstructorInitializers: BeforeColon
+ConstructorInitializerIndentWidth: 2
+IndentAccessModifiers: true
+IndentWidth: 2
+NamespaceIndentation: All
+PenaltyBreakBeforeFirstCallParameter: 1
+TabWidth: 2
+UseTab: Never
