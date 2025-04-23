@@ -44,10 +44,10 @@ namespace DMG {
   }
 
   void DMG::execute_block0(uint8_t opcode) {
-    bool halfCarry, carry;
-    char dest;
-    uint8_t data;
-    uint16_t bigData;
+    bool halfCarry, carry = 0;
+    char dest = 0;
+    uint8_t data = 0;
+    uint16_t bigData = 0;
 
     switch (opcode & 0b111) {
       case 0b000:
@@ -113,7 +113,6 @@ namespace DMG {
           cycles += 12;
           PC.val++;
         }
-        
         break;
 
       case 0b010:
@@ -184,7 +183,7 @@ namespace DMG {
         if (dest == 6) {
           cycles += 12;
         } else {
-          cycles += 4;
+          cycles += 8;
         }
 
         PC.val++;
@@ -403,17 +402,20 @@ namespace DMG {
 
   bool DMG::decode_condition(uint8_t index) {
     switch (index) {
-      case 0b00: // NZ
+      case 0b00:  // NZ
         return !(bool)(*F & ZERO);
 
-      case 0b01: // Z
+      case 0b01:  // Z
         return (bool)(*F & ZERO);
 
-      case 0b10: // NC
+      case 0b10:  // NC
         return !(bool)(*F & CARRY);
 
-      case 0b11: // C
+      case 0b11:  // C
         return (bool)(*F & CARRY);
+
+      default:
+        return false;
     }
   }
 }

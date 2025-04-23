@@ -9,3 +9,10 @@ build:
 
 run:
   ./build/gbpp
+
+
+test: clean build
+  cd build && ctest --output-on-failure
+
+test-basic: build
+  ./build/TestBasicOps
