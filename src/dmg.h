@@ -73,6 +73,7 @@ namespace DMG {
       uint8_t mk_flags(bool zero, bool sub, bool half_carry, bool carry);
       R8 *decode_r8(uint8_t index);
       R16 *decode_r16(uint8_t index);
+      bool decode_condition(uint8_t index);
       // char* decode_r16stk(char index);
       // char* decode_r16mem(char index);
   };
