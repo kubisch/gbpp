@@ -100,6 +100,7 @@ namespace DMG {
       void execute_block0(uint8_t opcode);
       void execute_block1(uint8_t opcode);
       void execute_block2(uint8_t opcode);
+      void execute_block3(uint8_t opcode);
 
       uint8_t mk_flags(bool zero, bool sub, bool half_carry, bool carry);
       R8 *decode_r8(uint8_t index);
